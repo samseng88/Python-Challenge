@@ -44,25 +44,27 @@ with open(csvpath) as csvfile:
         
         #The average change in losses
             average_change = round((int((dataset)[-1][1]) - int((dataset)[0][1])) / (len(dataset)-1),2)
-                       
-# Write Output file
-output = os.path.join( "Analysis", "budget_analysis.txt")
 
-# Generate Output Summary
-print(f"\nFinancial Analysis\n")
-print(f"---------------------------\n")
-print(f"Total Months: {total_months}\n")
-print(f"Total: ${net_total}\n")
-print(f"Average Change: ${average_change}\n")
-print(f"Greatest Incease in Profits: {greatest_increase[0]} (${greatest_increase[1]})\n")
-print(f"Greatest Decrease in Profits: {greatest_decrease[0]} (${greatest_decrease[1]})\n")
+    # Write Output file
+output_path = os.path.join( "Analysis", "budget_analysis.txt")
 
-# Export a text file with the results to Analysis folder
-with open(output, "w") as results:
-        results.write("\n\nFinancial Analysis\n")
-        results.write("----------------------------\n")
-        results.write(f"Total Months:  {total_months}\n")
-        results.write(f"Total:  ${net_total}\n")
-        results.write(f"Average Change: ${average_change}\n")
-        results.write(f"Greatest Increase in Profits: {greatest_increase[0]} (${greatest_increase[1]})\n")
-        results.write(f"Greatest Decrease in Profits: {greatest_decrease[0]} (${greatest_decrease[1]})\n")
+# Generate Summary
+print('Financial Analysis')
+print('---------------------------------')
+print(f'Total Months: {total_months}')
+print(f'Total: ${net_total}')
+print(f'Average Change: ${average_change}')
+print(f'Greatest Incease in Profits: {greatest_increase[0]} (${greatest_increase[1]})')
+print(f'Greatest Decrease in Profits: {greatest_decrease[0]} (${greatest_decrease[1]})')
+
+
+# Export a text file to Analysis folder
+with open(output_path, "w") as csvfile:
+    writer = csv.writer(csvfile)
+    csvfile.write('Financial Analysis\n')
+    csvfile.write('----------------------------\n')
+    csvfile.write(f'Total Months:  {total_months}\n')
+    csvfile.write(f'Total:  ${net_total}\n')
+    csvfile.write(f'Average Change: ${average_change}\n')
+    csvfile.write(f'Greatest Increase in Profits: {greatest_increase[0]} (${greatest_increase[1]})\n')
+    csvfile.write(f'Greatest Decrease in Profits: {greatest_decrease[0]} (${greatest_decrease[1]})\n')
