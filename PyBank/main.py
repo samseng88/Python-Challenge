@@ -4,56 +4,65 @@ import csv
 # Set path for file
 csvpath = os.path.join('Resources', 'budget_data.csv')
 
-# Determine variables
+# List variables
 total_months = 0
-prev_revenue = 0
-month_of_change = []
-revenue_change_list = []
-greatest_increase = ["", 0]
-greatest_decrease = ["", 9]
-total_revenue = 0
+net_total = 0
+dataset = []
+average_change = []
+greatest_increase = ["",0]
+greatest_decrease = ["",0]
 
-# Open the CSV
+# Open the CSV and skip header
 with open(csvpath) as csvfile:
     csvreader = csv.reader(csvfile, delimiter=",")
+    csv_header = next(csvreader)
 
+# Skip the header for count
     for row in csvreader:
-        # print(row) works
-        # track totals
-        total_months = total_months + 1
-        total_revenue = total_revenue + int(row["Profit/Losses"])
+    # Add the total months
+        total_months += 1
 
-    #track profit/losses change
-    revenue_change = int(row["Profit/Losses"]) - prev_revenue
-    prev_revenue = int(row["Revenue"])
-    revenue_change_list = revenue_change_list + [revenue_change]
-    month_of_change = month_of_change + [row["Date"]]
+# Calculate the net total Profit/Lossess
+        net_total = int(net_total) + int(row[1])
 
-    # Calculate greatest increase
-    if (revenue_change > greatest_increase[1]):
-        greatest_increase[0] = row["Date"]
-        greatest_increase[1] = revenue_change
-    
-    # Calculate greatest decrease
-    if (revenue_change < greatest_decrease[1]):
-        greatest_decrease[0] = row["Date"]
-        greatest_decrease[1] = revenue_change
+#Put data into a list to calculate monthly change
+        dataset.append(row)
+        
+        #Loop through data and get the monthly change 
+        for i in range(len(dataset)-1):
+            average_change = int((dataset)[i + 1][1]) - int((dataset)[i][1])
 
-# Calculate the Average Revenue Change
-revenue_avg = sum(revenue_change_list) / len(revenue_change_list)
+        # The greatest increase in profits (date & amount)
+            if  (average_change > greatest_increase[1]):
+                greatest_increase[0] = row[0]
+                greatest_increase[1] = average_change
+
+        # The greatest decrease in profits (date & amount)
+            if (average_change < greatest_decrease[1]):
+                greatest_decrease[0] = row[0]
+                greatest_decrease[1] = average_change
+        
+        #The average change in losses
+            average_change = round((int((dataset)[-1][1]) - int((dataset)[0][1])) / (len(dataset)-1),2)
+                       
+# Write Output file
+output = os.path.join( "Analysis", "budget_analysis.txt")
 
 # Generate Output Summary
-output = (
-    f"\nFinancial Analysis\n"
-    f"---------------------------\n"
-    f"Total Months: {total_months}\n"
-    f"Total Revenue: ${total_revenue}\n"
-    f"Average Revenue Change: ${revenue_avg}\n"
-    f"Greatest Incease in Revenue: {greatest_increase[0]} (${greatest_increase[1]})\n"
-    f"Greatest Decrease in Revenue: {greatest_decrease[0]} (${greatest_decrease[1]})\n"
-)
+print(f"\nFinancial Analysis\n")
+print(f"---------------------------\n")
+print(f"Total Months: {total_months}\n")
+print(f"Total: ${net_total}\n")
+print(f"Average Change: ${average_change}\n")
+print(f"Greatest Incease in Profits: {greatest_increase[0]} (${greatest_increase[1]})\n")
+print(f"Greatest Decrease in Profits: {greatest_decrease[0]} (${greatest_decrease[1]})\n")
 
-# Print the output
-print(output)
-
-#Export the results to the text file
+# Export a text file with the results to Analysis folder
+with open(output, "w") as results:
+        results.write("\n\nFinancial Analysis\n")
+        results.write("----------------------------\n")
+        results.write(f"Total Months:  {total_months}\n")
+        results.write(f"Total:  ${net_total}\n")
+        results.write(f"Average Change: ${average_change}\n")
+        results.write(f"Greatest Increase in Profits: {greatest_increase[0]} (${greatest_increase[1]})\n")
+        results.write(f"Greatest Decrease in Profits: {greatest_decrease[0]} (${greatest_decrease[1]})\n")
